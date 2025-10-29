@@ -1,0 +1,125 @@
+[33mcommit 622724a8cbec21389ac0b2672d2d68323106c027[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;33mtag: 解决关机重启后键盘不能用的问题，仍然存在BIOS页面按键不生效的问题[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Alan <folk113@163.com>
+Date:   Thu Oct 12 11:00:29 2023 +0800
+
+    经过几次验证，开机重启键盘不能用问题基本未重现
+
+[33mcommit bfc784a094ee5bb11c599bee9456318ddc458163[m
+Author: Alan <folk113@163.com>
+Date:   Wed Oct 11 21:30:33 2023 +0800
+
+    相对稳定版本
+
+[33mcommit 700d1ad525b8b37d4532e00ec2b371927bceedfa[m
+Author: Alan <folk113@163.com>
+Date:   Wed Oct 11 13:23:55 2023 +0800
+
+    修复hint提示的错误
+
+[33mcommit 704a94468f8d8539436973cecc5f4c29d5c73b57[m
+Author: Alan <folk113@163.com>
+Date:   Wed Oct 11 13:16:50 2023 +0800
+
+    添加调试信息，调试日志头上加计数器
+
+[33mcommit 8d081975c9c42b1346c22d03c014f82799022d78[m
+Author: Alan <folk113@163.com>
+Date:   Mon Oct 9 22:35:05 2023 +0800
+
+    完成主体按键功能调试
+
+[33mcommit a0bcd4e52a5759a80fc5686f731fcc3c8e0ff190[m
+Author: Alan <folk113@163.com>
+Date:   Sun Oct 8 15:59:36 2023 +0800
+
+    完成数据接收保存调试
+
+[33mcommit 4be237554a5281fbb46165c3715e5ddd71bb97f5[m
+Author: Alan <folk113@163.com>
+Date:   Thu Oct 5 18:49:51 2023 +0800
+
+    系统崩溃，重新安装配置
+
+[33mcommit 3c9d4d1ed9982c50e35a93e56f45d37a23f99d45[m
+Author: Alan <folk113@163.com>
+Date:   Tue Oct 3 23:31:19 2023 +0800
+
+    修改协议，更新代码接收逻辑
+
+[33mcommit b3315e9f018f5e2db6e2d1c4bec95c00261f4cf7[m
+Author: Alan <folk113@163.com>
+Date:   Sat Sep 30 11:19:30 2023 +0800
+
+    更新日志
+
+[33mcommit 204ae202526b84b326cfe09929c02581a0745618[m
+Author: Alan <folk113@163.com>
+Date:   Sat Sep 30 11:08:20 2023 +0800
+
+    更新日志格式
+
+[33mcommit 8d7a282386a937d46512c57b76a272fa1ac26a91[m
+Author: Alan <folk113@163.com>
+Date:   Fri Sep 29 13:29:31 2023 +0800
+
+    添加flash数据写入部分
+
+[33mcommit 556e93ddddbb4fe946d7398e55989a4dd0503957[m
+Author: Alan <folk113@163.com>
+Date:   Thu Sep 28 22:03:41 2023 +0800
+
+    添加按键读取部分内容
+
+[33mcommit 2887731861e57d57c813e05d83c9da10ab5fd728[m
+Author: Alan <folk113@163.com>
+Date:   Wed Sep 27 00:55:07 2023 +0800
+
+    更新通信协议
+
+[33mcommit c9e295d333a055bcea9d51353ad5aea90cc68652[m
+Author: Alan <folk113@163.com>
+Date:   Sun Sep 24 01:04:53 2023 +0800
+
+    添加协议对接模块
+
+[33mcommit 5ade527658c8f3cea1d0ab109481b51d11e52096[m
+Author: Alan <folk113@163.com>
+Date:   Sat Sep 23 14:13:42 2023 +0800
+
+    添加日志系统
+
+[33mcommit d86dcfd79ea1d83152d886784d07cea239518917[m
+Author: Alan <folk113@163.com>
+Date:   Sat Sep 23 12:12:17 2023 +0800
+
+    dfdf
+
+[33mcommit 3d21f9935e74eda039ea276357dcce23e898ca80[m
+Author: Alan <folk113@163.com>
+Date:   Sat Sep 23 10:57:50 2023 +0800
+
+    完成i2c代码融合
+
+[33mcommit 9c8c5f707e81609ddfab26794e9d7af58aa18856[m
+Author: Alan <folk113@163.com>
+Date:   Sat Sep 23 10:31:20 2023 +0800
+
+    完成自定义HID、键盘与鼠标的代码整合，可以正常收到三个接口的数据
+
+[33mcommit db1881c9ed9e17ab4f67258494417a91374f73ca[m
+Author: Alan <folk113@163.com>
+Date:   Fri Sep 22 22:54:30 2023 +0800
+
+    完成键盘鼠标的添加，系统能够正常识别
+
+[33mcommit 5226f350927b19068732df733a09ebb7f108225a[m
+Author: Alan <folk113@163.com>
+Date:   Fri Sep 22 17:13:34 2023 +0800
+
+    配置编译调试环境，使用vscode编译调试恒沁risc-v相关产品（本文档以ch32v203为例）
+
+[33mcommit 0dbbdbf437596959cde2bff1b12ade236c71acc3[m[33m ([m[1;31morigin/develop[m[33m)[m
+Author: folk113 <folk113@163.com>
+Date:   Fri Sep 22 08:56:54 2023 +0000
+
+    Initial commit

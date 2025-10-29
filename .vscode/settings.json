@@ -1,0 +1,9 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "ch32x035_usbfs_device.h": "c"
+    },
+    "EIDE.OpenOCD.ExePath": "D:\\MounRiver\\MounRiver_Studio\\toolchain\\OpenOCD\\bin\\openocd.exe",
+    "EIDE.RISCV.InstallDirectory": "D:\\MounRiver\\MounRiver_Studio\\toolchain\\RISC-V Embedded GCC",
+    "EIDE.Builder.ThreadNumber": 1
+}

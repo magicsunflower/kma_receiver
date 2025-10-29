@@ -1,0 +1,3 @@
+[submodule "src/macro"]
+	path = src/macro
+	url = https://gitee.com/folk113/macro.git
