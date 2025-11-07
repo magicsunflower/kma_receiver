@@ -20,7 +20,7 @@ targets:
       defineList: []
       incList:
         - sdk/Peripheral/inc
-        - src    
+        - src
         - sdk/Core
         - sdk/Debug
         - sdk/Startup

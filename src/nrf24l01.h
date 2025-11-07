@@ -72,7 +72,9 @@ uint8_t NRF24L01_Write_Reg(uint8_t reg, uint8_t value);
 
 /* API */
 void NRF24L01_Init(void);
-void NRF24L01_RX_Mode(void);
+void NRF24L01_RX_Mode_By_Address(uint8_t *rx_addr, uint8_t len);
+void NRF24L01_Wait_Paired();
+void NRF24L01_Hop_Channel(uint8_t channel);
 void NRF24L01_TX_Mode(void);
 uint8_t NRF24L01_Check(void);
 uint8_t NRF24L01_TxPacket(uint8_t *txbuf);

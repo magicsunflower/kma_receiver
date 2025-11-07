@@ -2,18 +2,10 @@
 #include "debug.h"
 
 /* 发送与接收地址（示例） */
-const uint8_t TX_ADDRESS[TX_ADR_WIDTH] = {0x34, 0x43, 0x10, 0x10, 0x01};
-const uint8_t RX_ADDRESS[RX_ADR_WIDTH] = {0x34, 0x43, 0x10, 0x10, 0x01};
-
-/* 本地：设置 SPI1 的速度（通过 BR[2:0]） */
-static void SPIx_SetSpeed(uint16_t prescaler)
-{
-    // uint16_t tmp;
-    // tmp = SPI2->CTLR1;
-    // tmp &= ~(0x7 << 3);         // 清除原 BR[5:3] 位
-    // tmp |= prescaler;           // 例如：SPI_BaudRatePrescaler_8 即 (0x2 << 3)
-    // SPI1->CTLR1 = tmp;
-}
+// const uint8_t TX_ADDRESS[TX_ADR_WIDTH]     = {0x34, 0x43, 0x10, 0x10, 0x01};
+// const uint8_t RX_ADDRESS[RX_ADR_WIDTH]     = {0x34, 0x43, 0x10, 0x10, 0x01};
+const uint8_t BROADCAST_ADDR[RX_ADR_WIDTH] = {0xF1, 0xF2, 0xF3, 0xF4, 0xF5};
+#define INIT_CHANNEL 76
 
 /* CH32 SPI 读写一个字节函数（阻塞） */
 uint8_t SPIx_ReadWriteByte(SPI_TypeDef *SPIx, uint8_t TxData)
@@ -100,7 +92,6 @@ uint8_t NRF24L01_Check(void)
     uint8_t readbuf[5];
     uint8_t i;
 
-    SPIx_SetSpeed(SPI_BaudRatePrescaler_8);
     NRF24L01_Write_Buf(NRF_WRITE_REG + TX_ADDR, buf, 5);
     NRF24L01_Read_Buf(TX_ADDR, readbuf, 5);
 
@@ -180,22 +171,30 @@ uint8_t NRF24L01_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t len)
     return status;
 }
 
-/********************************************************
-函数功能：BK2425接收模式初始化
-入口参数：无
-返回  值：无
-*********************************************************/
-void NRF24L01_RX_Mode(void)
+void NRF24L01_RX_Mode_By_Address(uint8_t *rx_addr, uint8_t len)
 {
     NRF24L01_CE_LOW();
-    NRF24L01_Write_Buf(NRF_WRITE_REG + RX_ADDR_P0, (uint8_t *)RX_ADDRESS, RX_ADR_WIDTH); // 接收设备接收通道0使用和发送设备相同的发送地址
-    NRF24L01_Write_Reg(NRF_WRITE_REG + EN_AA, 0x01);                                     // 使能接收通道0自动应答
-    NRF24L01_Write_Reg(NRF_WRITE_REG + EN_RXADDR, 0x01);                                 // 使能接收通道0
-    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_CH, 40);                                       // 选择射频通道0x40
-    NRF24L01_Write_Reg(NRF_WRITE_REG + RX_PW_P0, RX_PLOAD_WIDTH);                        // 接收通道0选择和发送通道相同有效数据宽度
-    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_SETUP, 0x0f);                                  // 数据传输率2Mbps，发射功率7dBm
-    NRF24L01_Write_Reg(NRF_WRITE_REG + CONFIG, 0x0f);                                    // CRC使能，16位CRC校验，上电，接收模式
-    NRF24L01_Write_Reg(NRF_WRITE_REG + STATUS, 0xff);                                    // 清除所有的中断标志位
+    NRF24L01_Write_Buf(NRF_WRITE_REG + RX_ADDR_P0, rx_addr, len); // 接收设备接收通道0使用和发送设备相同的发送地址
+    NRF24L01_Write_Reg(NRF_WRITE_REG + EN_AA, 0x01);              // 使能接收通道0自动应答
+    NRF24L01_Write_Reg(NRF_WRITE_REG + EN_RXADDR, 0x01);          // 使能接收通道0
+    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_CH, INIT_CHANNEL);      // 选择射频通道0x40
+    NRF24L01_Write_Reg(NRF_WRITE_REG + RX_PW_P0, RX_PLOAD_WIDTH); // 接收通道0选择和发送通道相同有效数据宽度
+    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_SETUP, 0x0f);           // 数据传输率2Mbps，发射功率7dBm
+    NRF24L01_Write_Reg(NRF_WRITE_REG + CONFIG, 0x0f);             // CRC使能，16位CRC校验，上电，接收模式
+    NRF24L01_Write_Reg(NRF_WRITE_REG + STATUS, 0xff);             // 清除所有的中断标志位
+    NRF24L01_CE_HIGH();
+    Delay_Ms(1);
+}
+
+void NRF24L01_Wait_Paired()
+{
+    NRF24L01_RX_Mode_By_Address((uint8_t *)BROADCAST_ADDR, RX_ADR_WIDTH);
+}
+
+void NRF24L01_Hop_Channel(uint8_t channel)
+{
+    NRF24L01_CE_LOW();
+    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_CH, channel); // 选择射频通道0x40
     NRF24L01_CE_HIGH();
     Delay_Ms(1);
 }
@@ -207,17 +206,17 @@ void NRF24L01_RX_Mode(void)
 *********************************************************/
 void NRF24L01_TX_Mode(void)
 {
-    NRF24L01_CE_LOW();
-    NRF24L01_Write_Buf(NRF_WRITE_REG + TX_ADDR, (uint8_t *)TX_ADDRESS, TX_ADR_WIDTH);    // 写入发送地址
-    NRF24L01_Write_Buf(NRF_WRITE_REG + RX_ADDR_P0, (uint8_t *)RX_ADDRESS, RX_ADR_WIDTH); // 为了应答接收设备，接收通道0地址和发送地址相同
-    NRF24L01_Write_Reg(NRF_WRITE_REG + EN_AA, 0x01);                                     // 使能接收通道0自动应答
-    NRF24L01_Write_Reg(NRF_WRITE_REG + EN_RXADDR, 0x01);                                 // 使能接收通道0
-    NRF24L01_Write_Reg(NRF_WRITE_REG + SETUP_RETR, 0xff);                                //
-    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_CH, 40);                                       // 选择射频通道0x40
-    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_SETUP, 0x0f);                                  // 数据传输率2Mbps，发射功率7dBm
-    NRF24L01_Write_Reg(NRF_WRITE_REG + CONFIG, 0x0e);                                    //  CRC使能，16位CRC校验，上电
-    NRF24L01_CE_HIGH();
-    Delay_Ms(1);
+    // NRF24L01_CE_LOW();
+    // NRF24L01_Write_Buf(NRF_WRITE_REG + TX_ADDR, (uint8_t *)TX_ADDRESS, TX_ADR_WIDTH);    // 写入发送地址
+    // NRF24L01_Write_Buf(NRF_WRITE_REG + RX_ADDR_P0, (uint8_t *)RX_ADDRESS, RX_ADR_WIDTH); // 为了应答接收设备，接收通道0地址和发送地址相同
+    // NRF24L01_Write_Reg(NRF_WRITE_REG + EN_AA, 0x01);                                     // 使能接收通道0自动应答
+    // NRF24L01_Write_Reg(NRF_WRITE_REG + EN_RXADDR, 0x01);                                 // 使能接收通道0
+    // NRF24L01_Write_Reg(NRF_WRITE_REG + SETUP_RETR, 0xff);                                //
+    // NRF24L01_Write_Reg(NRF_WRITE_REG + RF_CH, 40);                                       // 选择射频通道0x40
+    // NRF24L01_Write_Reg(NRF_WRITE_REG + RF_SETUP, 0x0f);                                  // 数据传输率2Mbps，发射功率7dBm
+    // NRF24L01_Write_Reg(NRF_WRITE_REG + CONFIG, 0x0e);                                    //  CRC使能，16位CRC校验，上电
+    // NRF24L01_CE_HIGH();
+    // Delay_Ms(1);
 }
 
 /********************************************************
@@ -230,7 +229,6 @@ void NRF24L01_TX_Mode(void)
 uint8_t NRF24L01_TxPacket(uint8_t *txbuf)
 {
     uint8_t sta;
-    SPIx_SetSpeed(SPI_BaudRatePrescaler_8);
     NRF24L01_CE_LOW();                                      // CE拉低，使能SI24R1配置
     NRF24L01_Write_Buf(WR_TX_PLOAD, txbuf, TX_PLOAD_WIDTH); // 写数据到TX FIFO,32个字节
     NRF24L01_CE_HIGH();                                     // CE置高，使能发送
@@ -259,7 +257,6 @@ uint8_t NRF24L01_TxPacket(uint8_t *txbuf)
 uint8_t NRF24L01_RxPacket(uint8_t *rxbuf)
 {
     uint8_t sta;
-    SPIx_SetSpeed(SPI_BaudRatePrescaler_8);
     sta = NRF24L01_Read_Reg(STATUS);                           // 读取状态寄存器的值
     NRF24L01_Write_Reg(NRF_WRITE_REG + STATUS, sta);           // 清除RX_DS中断标志
     if (sta & RX_OK) {                                         // 接收到数据

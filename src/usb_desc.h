@@ -78,11 +78,16 @@
 #define REPORT_ID_MACRO_KEYBOARD          2
 #define REPORT_ID_MULTIMEDIA              3
 
-#define RF_PREFIX_RELATIVE_MOUSE          0x01
-#define RF_PREFIX_ABSOLUTE_MOUSE          0x02
-#define RF_PREFIX_RAW_KEYBOARD            0x03
-#define RF_PREFIX_MACRO_KEYBOARD          0x04
-#define RF_PREFIX_MULTIMEDIA              0x05
+// 指令格式，指令类型（1Byte）+ 指令长度（1Byte）+ 指令内容（由指令长度内容得出）
+#define RF_CMD_RELATIVE_MOUSE          0x01
+#define RF_CMD_ABSOLUTE_MOUSE          0x02
+#define RF_CMD_RAW_KEYBOARD            0x03
+#define RF_CMD_MACRO_KEYBOARD          0x04
+#define RF_CMD_MULTIMEDIA              0x05
+// 配对指令
+#define RF_CMD_PAIR_ADDR 0x10
+// 跳频指令
+#define RF_CMD_HOP_CHANNEL 0x12
 
 /******************************************************************************/
 /* external variables */
