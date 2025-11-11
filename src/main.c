@@ -54,45 +54,70 @@ int main(void)
             if (USBFS_DevEnumStatus) {
                 if (NRF24L01_RxPacket(data) == 0) {
                     printf("rx:%02x %02x", data[0], data[1]);
-                    for (int8_t index = 0; index < data[1]; index++) {
-                        printf(" %02x", data[index + 2]);
-                    }
+                    // for (int8_t index = 0; index < data[1]; index++) {
+                    //     printf(" %02x", data[index + 2]);
+                    // }
                     printf("\r\n");
                     uint8_t status =0;
                     switch (data[0]) {
                         case RF_CMD_RELATIVE_MOUSE:
+                            if (data[1] != DEF_ENDP_SIZE_RELATIVE_MS - 1) {
+                                break;
+                            }
                             data[1] = REPORT_ID_RELATIVE_MOUSE;
                             status  = USBFS_Endp_DataUp(DEF_UEP2, &data[1], DEF_ENDP_SIZE_RELATIVE_MS, DEF_UEP_CPY_LOAD);
                             break;
                         case RF_CMD_ABSOLUTE_MOUSE:
+                            if (data[1] != DEF_ENDP_SIZE_ABSOLUTE_MS - 1) {
+                                break;
+                            }
                             data[1] = REPORT_ID_ABSOLUTE_MOUSE;
                             status  = USBFS_Endp_DataUp(DEF_UEP2, &data[1], DEF_ENDP_SIZE_ABSOLUTE_MS, DEF_UEP_CPY_LOAD);
                             break;
                         case RF_CMD_RAW_KEYBOARD:
+                            if (data[1] != DEF_ENDP_SIZE_KB - 1) {
+                                break;
+                            }
                             data[1] = REPORT_ID_RAW_KEYBOARD;
                             status  = USBFS_Endp_DataUp(DEF_UEP1, &data[1], DEF_ENDP_SIZE_KB, DEF_UEP_CPY_LOAD);
                             break;
                         case RF_CMD_MACRO_KEYBOARD:
+                            if (data[1] != DEF_ENDP_SIZE_KB - 1) {
+                                break;
+                            }
                             data[1] = REPORT_ID_MACRO_KEYBOARD;
                             status  = USBFS_Endp_DataUp(DEF_UEP1, &data[1], DEF_ENDP_SIZE_KB, DEF_UEP_CPY_LOAD);
                             break;
                         case RF_CMD_MULTIMEDIA:
+                            if (data[1] != DEF_ENDP_SIZE_MULTIMEDIA - 1) {
+                                break;
+                            }
                             data[1] = REPORT_ID_MULTIMEDIA;
                             status  = USBFS_Endp_DataUp(DEF_UEP1, &data[1], DEF_ENDP_SIZE_MULTIMEDIA, DEF_UEP_CPY_LOAD);
                             break;
                         case RF_CMD_PAIR_ADDR:
                             printf("Received paired addr:");
-                            for (int index = 0; index < data[1]; index++) {
+                            if (data[1] != 5) {
+                                break;
+                            }
+                            RfConfig config = Load_Rf_Config();
+                            if (config.is_paired) {
+                                break;
+                            }
+                            for (int index = 0; index < 5; index++) {
                                 printf("%02x ", data[2 + index]);
                             }
                             printf("\r\n");
-                            Save_Paired_Address(&data[2], data[1]);
-                            NRF24L01_RX_Mode_By_Address(&data[2], data[1]);
+                            Save_Paired_Address(&data[2], 5);
+                            NRF24L01_RX_Mode_By_Address(&data[2], 5);
                             // NVIC_SystemReset();
                             break;
                         case RF_CMD_HOP_CHANNEL:
-                             NRF24L01_Hop_Channel(data[2]);
-                             break;
+                            if (data[1] != 1) {
+                                break;
+                            }
+                            NRF24L01_Hop_Channel(data[2]);
+                            break;
                         default:
                             break;
                     }
