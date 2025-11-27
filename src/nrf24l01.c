@@ -171,6 +171,9 @@ uint8_t NRF24L01_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t len)
     return status;
 }
 
+
+#define RF_POWER_MAX          0x06  // +0dBm (最高发射功率，此字段在接收模式应该没用)
+#define RF_DR_250KBPS         0x00  // 1mbps速率
 void NRF24L01_RX_Mode_By_Address(uint8_t *rx_addr, uint8_t len)
 {
     NRF24L01_CE_LOW();
@@ -179,7 +182,7 @@ void NRF24L01_RX_Mode_By_Address(uint8_t *rx_addr, uint8_t len)
     NRF24L01_Write_Reg(NRF_WRITE_REG + EN_RXADDR, 0x01);          // 使能接收通道0
     NRF24L01_Write_Reg(NRF_WRITE_REG + RF_CH, INIT_CHANNEL);      // 选择射频通道0x40
     NRF24L01_Write_Reg(NRF_WRITE_REG + RX_PW_P0, RX_PLOAD_WIDTH); // 接收通道0选择和发送通道相同有效数据宽度
-    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_SETUP, 0x0f);           // 数据传输率2Mbps，发射功率7dBm
+    NRF24L01_Write_Reg(NRF_WRITE_REG + RF_SETUP, RF_POWER_MAX|RF_DR_250KBPS);           // 数据传输率2Mbps，发射功率7dBm
     NRF24L01_Write_Reg(NRF_WRITE_REG + CONFIG, 0x0f);             // CRC使能，16位CRC校验，上电，接收模式
     NRF24L01_Write_Reg(NRF_WRITE_REG + STATUS, 0xff);             // 清除所有的中断标志位
     NRF24L01_CE_HIGH();
