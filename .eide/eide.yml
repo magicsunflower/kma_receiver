@@ -1,0 +1,89 @@
+version: "4.1"
+name: kma_receiver
+type: RISC-V
+deviceName: null
+packDir: null
+srcDirs:
+  - APP
+  - HAL
+  - Ld
+  - LIB
+  - RVMSIS
+  - Startup
+  - StdPeriphDriver
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 93f37eeafbdf47bf4c83508f1b2b0df0
+targets:
+  obj:
+    cppPreprocessAttrs:
+      defineList: []
+      incList:
+        - Startup
+        - Ld
+        - RVMSIS
+        - StdPeriphDriver/inc
+        - Profile/include
+        - APP/include
+        - HAL/include
+        - LIB
+      libList:
+        - .
+        - StdPeriphDriver
+        - LIB
+    excludeList:
+      - HAL/include/KEY.h
+      - HAL/KEY.c
+      - Ld
+      - RVMSIS
+      - Startup
+      - StdPeriphDriver
+    toolchain: RISCV_GCC
+    toolchainConfigMap:
+      RISCV_GCC:
+        linkerScriptPath: Ld/Link.ld
+        options:
+          version: 2
+          afterBuildTasks: []
+          asm-compiler:
+            ASM_FLAGS: -Wl,-Bstatic
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            C_FLAGS: -Wl,-Bstatic
+            language-c: gnu99
+            language-cpp: c++11
+            one-elf-section-per-data: true
+            one-elf-section-per-function: true
+            optimization: level-size
+            signed-char: true
+            warnings: all-warnings
+          global:
+            abi: ilp32
+            arch: rv32imac
+            code-model: medlow
+            misc-control: -fmessage-length=0
+            output-debug-info: enable
+          linker:
+            $outputTaskExcludes:
+              - .bin
+            $toolName: auto
+            LD_FLAGS: -nostartfiles --specs=nano.specs --specs=nosys.specs -Xlinker --print-memory-usage
+            LIB_FLAGS: -lISP583 -lCH58xBLE
+            output-format: elf
+            remove-unused-input-sections: true
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+    uploader: JLink
