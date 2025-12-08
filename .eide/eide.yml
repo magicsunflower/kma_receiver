@@ -33,20 +33,15 @@ targets:
         - HAL/include
         - LIB
       libList:
-        - .
         - StdPeriphDriver
         - LIB
     excludeList:
       - HAL/include/KEY.h
       - HAL/KEY.c
-      - Ld
-      - RVMSIS
-      - Startup
-      - StdPeriphDriver
     toolchain: RISCV_GCC
     toolchainConfigMap:
       RISCV_GCC:
-        linkerScriptPath: Ld/Link.ld
+        linkerScriptPath: ""
         options:
           version: 2
           afterBuildTasks: []
@@ -69,21 +64,28 @@ targets:
             misc-control: -fmessage-length=0
             output-debug-info: enable
           linker:
-            $outputTaskExcludes:
-              - .bin
             $toolName: auto
-            LD_FLAGS: -nostartfiles --specs=nano.specs --specs=nosys.specs -Xlinker --print-memory-usage
+            LD_FLAGS: -nostartfiles --specs=nano.specs --specs=nosys.specs -Xlinker --print-memory-usage -T "Ld/Link.ld"
             LIB_FLAGS: -lISP583 -lCH58xBLE
             output-format: elf
             remove-unused-input-sections: true
     uploadConfigMap:
+      Custom:
+        bin: ${ExecutableName}.bin
+        commandLine: download.cmd ${programFile}
+        eraseChipCommand: ""
       JLink:
-        baseAddr: ""
+        baseAddr: "0x08000000"
         bin: ""
         cpuInfo:
-          cpuName: "null"
-          vendor: "null"
+          cpuName: STM32F103RB
+          vendor: ST
         otherCmds: ""
         proType: 1
         speed: 8000
-    uploader: JLink
+      OpenOCD:
+        baseAddr: "0x08000000"
+        bin: ""
+        interface: ${workspaceFolder}/tools/null
+        target: ${workspaceFolder}/tools/wch-riscv
+    uploader: Custom
