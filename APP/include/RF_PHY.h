@@ -20,8 +20,8 @@ extern "C" {
 #define SBP_RF_RF_RX_EVT           0x4
 #define SBP_RF_LEDOUT_TX_EVT       0x8
 
-#define HEARTBEAT_CNT_MAX          20       // ��λ��ms
-#define LLE_MODE_ORIGINAL_RX       (0x80)   // �������LLEMODEʱ���ϴ˺꣬����յ�һ�ֽ�Ϊԭʼ���ݣ�ԭ��ΪRSSI��
+#define HEARTBEAT_CNT_MAX          20       // 单位：ms
+#define LLE_MODE_ORIGINAL_RX       (0x80)   // 如果配置LLEMODE时加上此宏，则接收第一字节为原始数据（原来为RSSI）
 
 extern tmosTaskID RFtaskID;
 extern uint8_t LEDOUT_DATA[2];

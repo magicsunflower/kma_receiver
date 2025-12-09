@@ -1,4 +1,4 @@
-/********************************** (C) COPYRIGHT *******************************
+﻿/********************************** (C) COPYRIGHT *******************************
  * File Name          : CH57x_common.h
  * Author             : WCH
  * Version            : V1.2
@@ -44,7 +44,7 @@
 #endif
 
 /**
- * @brief  ϵͳ��Ƶʱ�ӣ�Hz��
+ * @brief  系统主频时钟（Hz）
  */
 #ifndef	 FREQ_SYS
 #define  FREQ_SYS		60000000
@@ -55,7 +55,7 @@
 #endif
 
 /**
- * @brief  32Kʱ�ӣ�Hz��
+ * @brief  32K时钟（Hz）
  */
 #ifdef CLK_OSC32K
 #if ( CLK_OSC32K == 1 )

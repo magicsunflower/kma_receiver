@@ -3,7 +3,7 @@
  * Author             : ChnMasterOG
  * Version            : V1.0
  * Date               : 2021/11/17
- * Description        : USBÇý¶¯Í·ÎÄ¼þ
+ * Description        : USBé©±åŠ¨å¤´æ–‡ä»¶
  *******************************************************************************/
 
 #ifndef __USB_H

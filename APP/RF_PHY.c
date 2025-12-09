@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 /******************************************************************************/
-/* Í·ÎÄ¼ş°üº¬ */
+/* å¤´æ–‡ä»¶åŒ…å« */
 #include "CONFIG.h"
 #include "HAL.h"
 
@@ -25,11 +25,11 @@ BOOL lastevent[3] = {FALSE, FALSE, FALSE};
 /*********************************************************************
  * @fn      RF_2G4StatusCallBack
  *
- * @brief   RF ×´Ì¬»Øµ÷£¬×¢Òâ£º²»¿ÉÔÚ´Ëº¯ÊıÖĞÖ±½Óµ÷ÓÃRF½ÓÊÕ»òÕß·¢ËÍAPI£¬ĞèÒªÊ¹ÓÃÊÂ¼şµÄ·½Ê½µ÷ÓÃ
+ * @brief   RF çŠ¶æ€å›è°ƒï¼Œæ³¨æ„ï¼šä¸å¯åœ¨æ­¤å‡½æ•°ä¸­ç›´æ¥è°ƒç”¨RFæ¥æ”¶æˆ–è€…å‘é€APIï¼Œéœ€è¦ä½¿ç”¨äº‹ä»¶çš„æ–¹å¼è°ƒç”¨
  *
- * @param   sta     - ×´Ì¬ÀàĞÍ
- * @param   crc     - crcĞ£Ñé½á¹û
- * @param   rxBuf   - Êı¾İbufÖ¸Õë
+ * @param   sta     - çŠ¶æ€ç±»å‹
+ * @param   crc     - crcæ ¡éªŒç»“æœ
+ * @param   rxBuf   - æ•°æ®bufæŒ‡é’ˆ
  *
  * @return  none
  */
@@ -147,12 +147,12 @@ void RF_2G4StatusCallBack(uint8_t sta, uint8_t crc, uint8_t *rxBuf)
 /*********************************************************************
  * @fn      RF_ProcessEvent
  *
- * @brief   RF ÊÂ¼ş´¦Àí
+ * @brief   RF äº‹ä»¶å¤„ç†
  *
- * @param   task_id - ÈÎÎñID
- * @param   events  - ÊÂ¼ş±êÖ¾
+ * @param   task_id - ä»»åŠ¡ID
+ * @param   events  - äº‹ä»¶æ ‡å¿—
  *
- * @return  Î´Íê³ÉÊÂ¼ş
+ * @return  æœªå®Œæˆäº‹ä»¶
  */
 uint16_t RF_ProcessEvent(uint8_t task_id, uint16_t events)
 {
@@ -202,7 +202,7 @@ uint16_t RF_ProcessEvent(uint8_t task_id, uint16_t events)
 /*********************************************************************
  * @fn      RF_Init
  *
- * @brief   RF ³õÊ¼»¯
+ * @brief   RF åˆå§‹åŒ–
  *
  * @return  none
  */
@@ -213,13 +213,13 @@ void RF_Init(void)
 
     tmos_memset(&rfConfig, 0, sizeof(rfConfig_t));
     RFtaskID = TMOS_ProcessEventRegister(RF_ProcessEvent);
-    rfConfig.accessAddress = 0x71764129; // ½ûÖ¹Ê¹ÓÃ0x55555555ÒÔ¼°0xAAAAAAAA ( ½¨Òé²»³¬¹ı24´ÎÎ»·´×ª£¬ÇÒ²»³¬¹ıÁ¬ĞøµÄ6¸ö0»ò1 )
+    rfConfig.accessAddress = 0x71764129; // ç¦æ­¢ä½¿ç”¨0x55555555ä»¥åŠ0xAAAAAAAA ( å»ºè®®ä¸è¶…è¿‡24æ¬¡ä½åè½¬ï¼Œä¸”ä¸è¶…è¿‡è¿ç»­çš„6ä¸ª0æˆ–1 )
     rfConfig.CRCInit = 0x555555;
 //    rfConfig.Channel = 8;
 //    rfConfig.Frequency = 2405000;
     rfConfig.Channel = 39;
     rfConfig.Frequency = 2480000;
-    rfConfig.LLEMode = LLE_MODE_AUTO | LLE_MODE_EX_CHANNEL; // Ê¹ÄÜ LLE_MODE_EX_CHANNEL ±íÊ¾ Ñ¡Ôñ rfConfig.Frequency ×÷ÎªÍ¨ĞÅÆµµã
+    rfConfig.LLEMode = LLE_MODE_AUTO | LLE_MODE_EX_CHANNEL; // ä½¿èƒ½ LLE_MODE_EX_CHANNEL è¡¨ç¤º é€‰æ‹© rfConfig.Frequency ä½œä¸ºé€šä¿¡é¢‘ç‚¹
     rfConfig.rfStatusCB = RF_2G4StatusCallBack;
     rfConfig.RxMaxlen = 251;
     state = RF_Config(&rfConfig);

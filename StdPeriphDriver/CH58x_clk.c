@@ -13,9 +13,9 @@
 /*********************************************************************
  * @fn      LClk32K_Select
  *
- * @brief   32K ��Ƶʱ����Դ
+ * @brief   32K 低频时钟来源
  *
- * @param   hc  - ѡ��32Kʹ���ڲ������ⲿ
+ * @param   hc  - 选择32K使用内部还是外部
  *
  * @return  none
  */
@@ -38,7 +38,7 @@ void LClk32K_Select(LClk32KTypeDef hc)
 /*********************************************************************
  * @fn      HSECFG_Current
  *
- * @brief   HSE���� ƫ�õ�������
+ * @brief   HSE晶体 偏置电流配置
  *
  * @param   c   - 75%,100%,125%,150%
  *
@@ -61,7 +61,7 @@ void HSECFG_Current(HSECurrentTypeDef c)
 /*********************************************************************
  * @fn      HSECFG_Capacitance
  *
- * @brief   HSE���� ���ص�������
+ * @brief   HSE晶体 负载电容配置
  *
  * @param   c   - refer to HSECapTypeDef
  *
@@ -84,7 +84,7 @@ void HSECFG_Capacitance(HSECapTypeDef c)
 /*********************************************************************
  * @fn      LSECFG_Current
  *
- * @brief   LSE���� ƫ�õ�������
+ * @brief   LSE晶体 偏置电流配置
  *
  * @param   c   - 70%,100%,140%,200%
  *
@@ -107,7 +107,7 @@ void LSECFG_Current(LSECurrentTypeDef c)
 /*********************************************************************
  * @fn      LSECFG_Capacitance
  *
- * @brief   LSE���� ���ص�������
+ * @brief   LSE晶体 负载电容配置
  *
  * @param   c   - refer to LSECapTypeDef
  *
@@ -130,11 +130,11 @@ void LSECFG_Capacitance(LSECapTypeDef c)
 /*********************************************************************
  * @fn      Calibration_LSI
  *
- * @brief   У׼�ڲ�32Kʱ��
+ * @brief   校准内部32K时钟
  *
- * @param   cali_Lv - У׼�ȼ�ѡ��    Level_32  -   ��ʱ 1.2ms 1000ppm (32M ��Ƶ)  1100ppm (60M ��Ƶ)
- *                              Level_64  -   ��ʱ 2.2ms 800ppm  (32M ��Ƶ)  1000ppm (60M ��Ƶ)
- *                              Level_128 -   ��ʱ 4.2ms 600ppm  (32M ��Ƶ)  800ppm  (60M ��Ƶ)
+ * @param   cali_Lv - 校准等级选择    Level_32  -   用时 1.2ms 1000ppm (32M 主频)  1100ppm (60M 主频)
+ *                              Level_64  -   用时 2.2ms 800ppm  (32M 主频)  1000ppm (60M 主频)
+ *                              Level_128 -   用时 4.2ms 600ppm  (32M 主频)  800ppm  (60M 主频)
  *
  * @return  none
  */
@@ -154,7 +154,7 @@ void Calibration_LSI(Cali_LevelTypeDef cali_Lv)
     R8_XT32K_TUNE &= ~3;
     R8_XT32K_TUNE |= 1;
 
-    // �ֵ�
+    // 粗调
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     SAFEOPERATE;
@@ -175,11 +175,11 @@ void Calibration_LSI(Cali_LevelTypeDef cali_Lv)
     while(1)
     {
         while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-        i = R16_OSC_CAL_CNT; // ���ڶ���
+        i = R16_OSC_CAL_CNT; // 用于丢弃
         while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
         R16_OSC_CAL_CNT |= RB_OSC_CAL_OV_CLR;
         while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-        i = R16_OSC_CAL_CNT; // ʵʱУ׼�����ֵ
+        i = R16_OSC_CAL_CNT; // 实时校准后采样值
         cnt_offset = (i & 0x3FFF) + R8_OSC_CAL_OV_CNT * 0x3FFF - 2000 * (freq_sys / 1000) / CAB_LSIFQ;
         if(((cnt_offset > -37 * (freq_sys / 1000) / CAB_LSIFQ) && (cnt_offset < 37 * (freq_sys / 1000) / CAB_LSIFQ)) || retry > 2)
             break;
@@ -191,10 +191,10 @@ void Calibration_LSI(Cali_LevelTypeDef cali_Lv)
         R16_INT32K_TUNE += cnt_offset;
     }
 
-    // ϸ��
-    // ����ϸ�������󣬶���2�β���ֵ��������Ϊ�����ж�����һ�Σ�����ֻ��һ��
+    // 细调
+    // 配置细调参数后，丢弃2次捕获值（软件行为）上判断已有一次，这里只留一次
     while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-    i = R16_OSC_CAL_CNT; // ���ڶ���
+    i = R16_OSC_CAL_CNT; // 用于丢弃
     R16_OSC_CAL_CNT |= RB_OSC_CAL_OV_CLR;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
@@ -203,7 +203,7 @@ void Calibration_LSI(Cali_LevelTypeDef cali_Lv)
     R8_OSC_CAL_CTRL |= cali_Lv;
     while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
     while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-    i = R16_OSC_CAL_CNT; // ʵʱУ׼�����ֵ
+    i = R16_OSC_CAL_CNT; // 实时校准后采样值
     cnt_offset = (i & 0x3FFF) + R8_OSC_CAL_OV_CNT * 0x3FFF - 4000 * (1 << cali_Lv) * (freq_sys / 1000000) / CAB_LSIFQ * 1000;
     cnt_offset = (cnt_offset > 0) ? ((((cnt_offset * (3200 / (1 << cali_Lv))) / (1366 * (freq_sys / 1000) / CAB_LSIFQ)) + 1) / 2) << 5 : ((((cnt_offset * (3200 / (1 << cali_Lv))) / (1366 * (freq_sys / 1000) / CAB_LSIFQ)) - 1) / 2) << 5;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
@@ -216,14 +216,14 @@ void Calibration_LSI(Cali_LevelTypeDef cali_Lv)
 /*********************************************************************
  * @fn      RTCInitTime
  *
- * @brief   RTCʱ�ӳ�ʼ����ǰʱ��
+ * @brief   RTC时钟初始化当前时间
  *
- * @param   y       - �����꣬MAX_Y = BEGYEAR + 44
- * @param   mon     - �����£�MAX_MON = 12
- * @param   d       - �����գ�MAX_D = 31
- * @param   h       - ����Сʱ��MAX_H = 23
- * @param   m       - ���÷��ӣ�MAX_M = 59
- * @param   s       - �����룬MAX_S = 59
+ * @param   y       - 配置年，MAX_Y = BEGYEAR + 44
+ * @param   mon     - 配置月，MAX_MON = 12
+ * @param   d       - 配置日，MAX_D = 31
+ * @param   h       - 配置小时，MAX_H = 23
+ * @param   m       - 配置分钟，MAX_M = 59
+ * @param   s       - 配置秒，MAX_S = 59
  *
  * @return  none
  */
@@ -285,14 +285,14 @@ void RTC_InitTime(uint16_t y, uint16_t mon, uint16_t d, uint16_t h, uint16_t m, 
 /*********************************************************************
  * @fn      RTC_GetTime
  *
- * @brief   ��ȡ��ǰʱ��
+ * @brief   获取当前时间
  *
- * @param   py      - ��ȡ�����꣬MAX_Y = BEGYEAR + 44
- * @param   pmon    - ��ȡ�����£�MAX_MON = 12
- * @param   pd      - ��ȡ�����գ�MAX_D = 31
- * @param   ph      - ��ȡ����Сʱ��MAX_H = 23
- * @param   pm      - ��ȡ���ķ��ӣ�MAX_M = 59
- * @param   ps      - ��ȡ�����룬MAX_S = 59
+ * @param   py      - 获取到的年，MAX_Y = BEGYEAR + 44
+ * @param   pmon    - 获取到的月，MAX_MON = 12
+ * @param   pd      - 获取到的日，MAX_D = 31
+ * @param   ph      - 获取到的小时，MAX_H = 23
+ * @param   pm      - 获取到的分钟，MAX_M = 59
+ * @param   ps      - 获取到的秒，MAX_S = 59
  *
  * @return  none
  */
@@ -330,9 +330,9 @@ void RTC_GetTime(uint16_t *py, uint16_t *pmon, uint16_t *pd, uint16_t *ph, uint1
 /*********************************************************************
  * @fn      RTC_SetCycle32k
  *
- * @brief   ����LSE/LSIʱ�ӣ����õ�ǰRTC ������
+ * @brief   基于LSE/LSI时钟，配置当前RTC 周期数
  *
- * @param   cyc     - �������ڼ�����ֵ��MAX_CYC = 0xA8BFFFFF = 2831155199
+ * @param   cyc     - 配置周期计数初值，MAX_CYC = 0xA8BFFFFF = 2831155199
  *
  * @return  none
  */
@@ -356,11 +356,11 @@ void RTC_SetCycle32k(uint32_t cyc)
 /*********************************************************************
  * @fn      RTC_GetCycle32k
  *
- * @brief   ����LSE/LSIʱ�ӣ���ȡ��ǰRTC ������
+ * @brief   基于LSE/LSI时钟，获取当前RTC 周期数
  *
  * @param   none
  *
- * @return  ��ǰ��������MAX_CYC = 0xA8BFFFFF = 2831155199
+ * @return  当前周期数，MAX_CYC = 0xA8BFFFFF = 2831155199
  */
 uint32_t RTC_GetCycle32k(void)
 {
@@ -377,7 +377,7 @@ uint32_t RTC_GetCycle32k(void)
 /*********************************************************************
  * @fn      RTC_TMRFunCfg
  *
- * @brief   RTC��ʱģʽ���ã�ע�ⶨʱ��׼�̶�Ϊ32768Hz��
+ * @brief   RTC定时模式配置（注意定时基准固定为32768Hz）
  *
  * @param   t   - refer to RTC_TMRCycTypeDef
  *
@@ -396,9 +396,9 @@ void RTC_TMRFunCfg(RTC_TMRCycTypeDef t)
 /*********************************************************************
  * @fn      RTC_TRIGFunCfg
  *
- * @brief   RTCʱ�䴥��ģʽ����
+ * @brief   RTC时间触发模式配置
  *
- * @param   cyc - ��Ե�ǰʱ��Ĵ������ʱ�䣬����LSE/LSIʱ��������
+ * @param   cyc - 相对当前时间的触发间隔时间，基于LSE/LSI时钟周期数
  *
  * @return  none
  */
@@ -423,9 +423,9 @@ void RTC_TRIGFunCfg(uint32_t cyc)
 /*********************************************************************
  * @fn      RTC_ModeFunDisable
  *
- * @brief   RTC ģʽ���ܹر�
+ * @brief   RTC 模式功能关闭
  *
- * @param   m   - ��Ҫ�رյĵ�ǰģʽ
+ * @param   m   - 需要关闭的当前模式
  *
  * @return  none
  */
@@ -452,11 +452,11 @@ void RTC_ModeFunDisable(RTC_MODETypeDef m)
 /*********************************************************************
  * @fn      RTC_GetITFlag
  *
- * @brief   ��ȡRTC�жϱ�־
+ * @brief   获取RTC中断标志
  *
  * @param   f   - refer to RTC_EVENTTypeDef
  *
- * @return  �жϱ�־״̬
+ * @return  中断标志状态
  */
 uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 {
@@ -473,7 +473,7 @@ uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 /*********************************************************************
  * @fn      RTC_ClearITFlag
  *
- * @brief   ���RTC�жϱ�־
+ * @brief   清除RTC中断标志
  *
  * @param   f   - refer to RTC_EVENTTypeDef
  *
